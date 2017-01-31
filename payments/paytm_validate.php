@@ -16,25 +16,61 @@
 	{		
 		if ($_POST["STATUS"] == "TXN_SUCCESS") 
 		{
-			$success_message = $_POST['RESPMSG'];
-			// update order information
+			// Create an array having all required parameters for status query.
+			$requestParamList = array("MID" => get_setting_value($payment_params, "merchant_id", "") , "ORDERID" => $_POST['ORDERID']);
 			
-			$sql  = " UPDATE " . $table_prefix . "orders ";
-			$sql .= " SET success_message=" . $db->tosql($_POST["STATUS"], TEXT);
-			$sql .= ", pending_message='', error_message='' ";
-			if ($transaction_id) {
-				$sql .= ", transaction_id=" . $db->tosql($_POST["TXNID"], TEXT);
+			// Call the PG's getTxnStatus() function for verifying the transaction status.
+			if(get_setting_value($payment_params, "live_mode", "") == 'yes')
+			{
+				$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/TXNSTATUS';
 			}
-			$sql .= " WHERE order_id=" . $db->tosql($_POST["ORDERID"], INTEGER);
-			$db->query($sql);
+			else
+			{
+				$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/TXNSTATUS';
+			}
+			$responseParamList = callAPI($check_status_url, $requestParamList);
+			if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST["TXNAMOUNT"])
+			{			
+				$success_message = $_POST['RESPMSG'];
+				// update order information
+				
+				$sql  = " UPDATE " . $table_prefix . "orders ";
+				$sql .= " SET success_message=" . $db->tosql($_POST["STATUS"], TEXT);
+				$sql .= ", pending_message='', error_message='' ";
+				if ($transaction_id) {
+					$sql .= ", transaction_id=" . $db->tosql($_POST["TXNID"], TEXT);
+				}
+				$sql .= " WHERE order_id=" . $db->tosql($_POST["ORDERID"], INTEGER);
+				$db->query($sql);
 
-			// update order status
-			if ($_POST["STATUS"]) {
-				update_order_status($_POST["ORDERID"], $_POST["STATUS"], true, "", $status_error);
-			}		
+				// update order status
+				if ($_POST["STATUS"]) {
+					update_order_status($_POST["ORDERID"], $_POST["STATUS"], true, "", $status_error);
+				}
+			}
+			else{
+				$error_message = 'Suspected Fraud';
+				$status = 'TXN_FAILURE';
+				// update order information
+							
+				$sql  = " UPDATE " . $table_prefix . "orders ";
+				$sql .= " SET success_message=" . $db->tosql($status, TEXT);;
+				$sql .= ", pending_message='' ";
+				$sql .= ", error_message=" . $db->tosql($status, TEXT);;
+				if ($transaction_id) {
+					$sql .= ", transaction_id=" . $db->tosql($_POST["TXNID"], TEXT);
+				}
+				$sql .= " WHERE order_id=" . $db->tosql($_POST["ORDERID"], INTEGER);
+				$db->query($sql);
+				
+				// update order status
+				if ($status) {
+					update_order_status($_POST["ORDERID"], $status, true, "", $status_error);
+				}
+			}
 		}
 		else 
-		{			
+		{		
 			$error_message = $_POST['RESPMSG'];
 			// update order information
 						
