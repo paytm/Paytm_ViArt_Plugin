@@ -11,7 +11,6 @@
 	$paytmChecksum = isset($_POST["CHECKSUMHASH"]) ? $_POST["CHECKSUMHASH"] : ""; //Sent by Paytm pg
 
 	$isValidChecksum = verifychecksum_e($paramList, get_setting_value($payment_params, "merchant_key", ""), $paytmChecksum); 
-		
 	if($isValidChecksum == "TRUE") 
 	{		
 		if ($_POST["STATUS"] == "TXN_SUCCESS") 
