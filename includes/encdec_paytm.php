@@ -153,7 +153,6 @@ function callAPI($apiURL, $requestParamList) {
 	$responseParamList = json_decode($jsonResponse,true);
 	return $responseParamList;
 }
-
 function callNewAPI($apiURL, $requestParamList) {
 	$jsonResponse = "";
 	$responseParamList = array();
