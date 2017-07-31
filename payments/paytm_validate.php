@@ -52,7 +52,7 @@
 				}
 			}
 			else{
-				$error_message = 'Suspected Fraud';
+				$error_message = 'It seems some issue in server to server communication. Kindly connect with administrator.';
 				$status = 'TXN_FAILURE';
 				// update order information
 							
