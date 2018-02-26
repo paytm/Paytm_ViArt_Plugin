@@ -23,14 +23,20 @@
 			$requestParamList['CHECKSUMHASH'] = $StatusCheckSum;
 			
 			// Call the PG's getTxnStatus() function for verifying the transaction status.
-			if(get_setting_value($payment_params, "live_mode", "") == 'yes')
-			{
-				$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
-			}
-			else
-			{
-				$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
-			}
+			/*	19751/17Jan2018	*/
+				/*if(get_setting_value($payment_params, "live_mode", "") == 'yes') {
+					$check_status_url = 'https://secure.paytm.in/oltp/HANDLER_INTERNAL/getTxnStatus';
+				} else {
+					$check_status_url = 'https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus';
+				}*/
+
+				/*if(get_setting_value($payment_params, "live_mode", "") == 'yes') {
+					$check_status_url = 'https://securegw.paytm.in/merchant-status/getTxnStatus';
+				} else {
+					$check_status_url = 'https://securegw-stage.paytm.in/merchant-status/getTxnStatus';
+				}*/
+				$check_status_url = get_setting_value($payment_params, "transaction_status_url", "");
+			/*	19751/17Jan2018 end	*/
 			$responseParamList = callNewAPI($check_status_url, $requestParamList);
 			if($responseParamList['STATUS']=='TXN_SUCCESS' && $responseParamList['TXNAMOUNT']==$_POST["TXNAMOUNT"])
 			{			

@@ -47,15 +47,20 @@
 	$paramList["CALLBACK_URL"] = $callback_url;
 	
 	$checkSum = getChecksumFromArray($paramList, get_setting_value($payment_params, "merchant_key", ""));
-	
-	if(get_setting_value($payment_params, "live_mode", "") == 'yes')
-	{
-		$post_url = "https://secure.paytm.in/oltp-web/processTransaction";
-	}
-	else
-	{
-		$post_url = "https://pguat.paytm.com/oltp-web/processTransaction";
-	}
+	/*	19751/17Jan2018	*/
+		/*if(get_setting_value($payment_params, "live_mode", "") == 'yes') {
+			$post_url = "https://secure.paytm.in/oltp-web/processTransaction";
+		} else {
+			$post_url = "https://pguat.paytm.com/oltp-web/processTransaction";
+		}*/
+
+		/*if(get_setting_value($payment_params, "live_mode", "") == 'yes') {
+			$post_url = "https://securegw.paytm.in/theia/processTransaction";
+		} else {
+			$post_url = "https://securegw-stage.paytm.in/theia/processTransaction";
+		}*/
+		$post_url = get_setting_value($payment_params, "transaction_url", "");
+	/*	19751/17Jan2018 end	*/
 	?>
 	<html>
 		<head>
