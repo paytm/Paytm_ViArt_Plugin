@@ -181,6 +181,10 @@
                             "tokenType": "TXN_TOKEN",
                             "amount": amount
                         },
+                        "integration": {
+                            "platform": "ViArt",
+                            "version": "<?php echo va_version() ?>|<?php echo PaytmConstants::PLUGIN_VERSION ?>"
+                        },
                         "merchant": {
                             "redirect": true
                         },
