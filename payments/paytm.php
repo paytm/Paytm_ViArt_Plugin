@@ -36,8 +36,8 @@
 
 	$checkSum = "";
 	$paramList = array();
-	//$callback_url = get_setting_value($payment_params, "callback_url", "");
-	$callback_url = 'http://127.0.0.1/viart/viart56/payments/paytm_validate.php';
+	$callback_url = get_setting_value($payment_params, "callback_url", "");
+	//$callback_url = 'http://127.0.0.1/viart/viart56/payments/paytm_validate.php';
 	$merchant_key = get_setting_value($payment_params, "merchant_key", "");
 	
 	$ORDER_ID = PaytmHelper::getPaytmOrderId($_POST["invoice"]);
